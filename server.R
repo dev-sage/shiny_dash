@@ -7,6 +7,13 @@ server <- function(input, output) {
   
   order_data <- readRDS("./data/order_data.rds")
   
+  output$order_status <- renderText({
+    order_status_data <- order_data[order_data$client == input$client_select,]
+    paste("Completed: ", as.character(nrow(order_status_data[order_status_data$order_status == "Completed",])),
+          "Outstanding: ", as.character(nrow(order_status_data[order_status_data$order_status == "In Progress",])),
+          sep = " ")
+  })
+  
   output$select_clients <- renderUI({
     client_list <- unique(order_data$client)
     selectInput('client_select', label = 'Select Client', choices = client_list)
