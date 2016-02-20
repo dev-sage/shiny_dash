@@ -3,9 +3,8 @@ library(shinydashboard)
 library(shiny)
 library(ggplot2)
 library(magrittr)
-library(dplyr)
-library(data.table)
 library(DT)
+library(dplyr)
 library(leaflet)
 
 server <- function(input, output) {
@@ -47,16 +46,11 @@ server <- function(input, output) {
   })
   
   output$client_map <- renderLeaflet({
-    leaflet() %>% 
-      addProviderTiles("Stamen.Terrain") %>% addCircleMarkers(data = order_data, 
-                                                        lng = client_lon, lat = client_lat, radius = 10,
-                                                        popup = clients, col = "blue")
+    map_data <- data.frame("client" = unique(order_data$client), "client_lat" = unique(order_data$client_lat), "client_lon" = unique(order_data$client_lon))
+    leaflet(map_data) %>% 
+      addProviderTiles("Stamen.Terrain") %>% addMarkers(lat = ~client_lat, 
+                                                        lng = ~client_lon,
+                                                        popup = ~client)
+                                                              
   })
 }
-
-# get_palette <- function() {
-#   my_pal <- coloNumeric(
-#     palette = c("blue", "red")
-#     domain = 
-#     
-# }
