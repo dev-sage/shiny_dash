@@ -28,14 +28,18 @@ ui <- dashboardPage(
                     dataTableOutput('next_orders'))
               )
       ),
-      tabItem(tabName = "order_list",
+      tabItem(tabName = 'order_list',
               fluidRow(
                 box(title = 'All Orders', status = 'danger', solidHeader = TRUE, width = 12,
                     dataTableOutput('all_orders'))
-              ))
-      # tabItem(tabName = 'widgets',
-      #         h2('Widgets tab content')
-      # )
+              )
+      ),
+      tabItem(tabName = 'client_map',
+              fluidRow(
+                box(title = 'Client Locations', status = 'info', solidheader = FALSE, width = 12,
+                    leafletOutput('client_map', height = 800))
+              )
+      )
     )
   )
 )

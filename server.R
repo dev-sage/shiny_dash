@@ -6,6 +6,7 @@ library(magrittr)
 library(dplyr)
 library(data.table)
 library(DT)
+library(leaflet)
 
 server <- function(input, output) {
   
@@ -44,4 +45,18 @@ server <- function(input, output) {
   output$all_orders <- renderDataTable({
     order_data[order(order_data$due_date, decreasing = TRUE), ]
   })
+  
+  output$client_map <- renderLeaflet({
+    leaflet() %>% 
+      addProviderTiles("Stamen.Terrain") %>% addCircleMarkers(data = order_data, 
+                                                        lng = client_lon, lat = client_lat, radius = 10,
+                                                        popup = clients, col = "blue")
+  })
 }
+
+# get_palette <- function() {
+#   my_pal <- coloNumeric(
+#     palette = c("blue", "red")
+#     domain = 
+#     
+# }
