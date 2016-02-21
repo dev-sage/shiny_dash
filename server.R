@@ -7,9 +7,11 @@ library(DT)
 library(dplyr)
 library(leaflet)
 library(xtable)
+source("helpers.R")
 
 order_data <- readRDS('./data/order_data.rds')
 client_list <- c('All', unique(order_data$client))
+print(client_list)
 
 shinyServer(function(input, output) {
   
@@ -59,15 +61,18 @@ shinyServer(function(input, output) {
   })
   
   output$client_map <- renderLeaflet({
-    map_data <- data.frame('client' = unique(order_data$client), 'client_lat' = unique(order_data$client_lat), 'client_lon' = unique(order_data$client_lon))
+    map_data <- data.frame('client' = unique(order_data$client), 
+                           'client_lat' = unique(order_data$client_lat),
+                           'client_lon' = unique(order_data$client_lon))
     leaflet(map_data) %>% 
       addProviderTiles('Stamen.Terrain') %>% addMarkers(lat = ~client_lat, 
                                                         lng = ~client_lon,
                                                         popup = ~client)
-                                                              
+  })
+
+  output$financial_output <- renderTable({
+    financial_data <- client_agg(order_data)
+    xtable(financial_data)
   })
   
-  output$financial_output <- renderTable({
-    xtable(InputData()[1:5,])
-  })
 })

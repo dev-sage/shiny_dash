@@ -5,10 +5,10 @@ order_price <- round(runif(500, 25, 500), 2)
 
 order_status <- ifelse(sample(c(0, 1), 500, replace = TRUE) == 1, "Completed", "In Progress")
 
-order_date <- sample(seq(as.Date('2015-03-10'), as.Date('2015-03-20'), by = "day"), 500,
+order_date <- sample(seq(as.Date('2016-01-01'), as.Date('2016-01-20'), by = "day"), 500,
                      replace = TRUE)
 
-due_date <- sample(seq(as.Date('2015-04-15'), as.Date('2015-6-15'), by = "day"), 500,
+due_date <- sample(seq(as.Date('2016-02-01'), as.Date('2016-02-25'), by = "day"), 500,
                    replace = TRUE)
 
 client <- sample(clients, 500, replace = TRUE)
@@ -25,8 +25,6 @@ coords <- data.frame(clients, client_lat, client_lon)
 
 order_data_rev <- order_data  %>% left_join(coords, by = c("client" = "clients"))
 
-saveRDS(order_data_rev, file = "~/Google_Drive/Andy_Dash/shiny_dash/data/order_data.RDS")
+order_data_rev$client <- as.character(order_data$client)
 
-?addMarkers()
-?markerOptions()
-?popupOptions()
+saveRDS(order_data_rev, file = "~/Google_Drive/Andy_Dash/shiny_dash/data/order_data.rds")
