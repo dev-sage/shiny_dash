@@ -11,6 +11,7 @@ shinyUI(dashboardPage(
       menuItem('Dashboard', tabName = 'dashboard', icon = icon('dashboard')),
       menuItem('Order List', tabName = 'order_list', icon = icon('th-list')),
       menuItem('Client Map', tabName = 'client_map', icon = icon('map')),
+      menuItem('Financials', tabName = 'financials', icon = icon('money')),
       uiOutput('select_clients')
     )
   ),
@@ -44,7 +45,12 @@ shinyUI(dashboardPage(
                 box(title = 'Client Locations', status = 'info', solidheader = FALSE, width = 12,
                     leafletOutput('client_map', height = 800))
               )
-      )
+      ),
+      tabItem(tabName = 'financials',
+              fluidRow(
+                box(title = 'Financials', status = 'info', solidHeader = TRUE, width = 12, align = 'center',
+                    tableOutput('financial_output'))
+              ))
     )
   )
 ))
