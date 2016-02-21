@@ -1,6 +1,11 @@
-ui <- dashboardPage(
+library(shiny)
+library(shinydashboard)
+library(leaflet)
+library(DT)
+
+shinyUI(dashboardPage(
   skin = 'green', 
-  dashboardHeader(title = 'Mt. Man Micro'),
+  dashboardHeader(title = "Buster's Business"),
   dashboardSidebar(
     sidebarMenu(
       menuItem('Dashboard', tabName = 'dashboard', icon = icon('dashboard')),
@@ -42,4 +47,4 @@ ui <- dashboardPage(
       )
     )
   )
-)
+))

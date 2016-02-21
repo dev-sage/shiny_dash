@@ -1,42 +1,43 @@
-## app.R ##
-library(shinydashboard)
+## server.R ##
 library(shiny)
+library(shinydashboard)
 library(ggplot2)
 library(magrittr)
 library(DT)
 library(dplyr)
 library(leaflet)
 
-server <- function(input, output) {
+order_data <- readRDS("./data/order_data.rds")
+client_list <- unique(order_data$client)
+
+shinyServer(function(input, output) {
   
-  order_data <- readRDS("./data/order_data.rds")
+  InputData <- reactive({
+    order_data[order_data$client == input$client_select,]
+  })
 
   output$order_status <- renderText({
-    order_status_data <- order_data[order_data$client == input$client_select,]
-    paste("Completed: ", as.character(nrow(order_status_data[order_status_data$order_status == "Completed",])),
-          "Outstanding: ", as.character(nrow(order_status_data[order_status_data$order_status == "In Progress",])),
+    paste("COMPLETED: ", as.character(nrow(InputData()[InputData()$order_status == "Completed",])),
+          "OUTSTANDING: ", as.character(nrow(InputData()[InputData()$order_status == "In Progress",])),
           sep = " ")
   })
   
   output$select_clients <- renderUI({
-    client_list <- unique(order_data$client)
     selectInput('client_select', label = 'Select Client', choices = client_list)
   })
   
   output$orders_placed_date <- renderPlot({
-    plot_data <- order_data[order_data$client == input$client_select,]
-    ggplot(plot_data, aes(x = order_date)) +
+    ggplot(InputData(), aes(x = order_date)) +
       geom_bar() + xlab("Date Order Placed") + ylab("# of Orders Placed")
   })
   
   output$orders_due_date <- renderPlot({
-    plot_data <- order_data[order_data$client == input$client_select,]
-    ggplot(plot_data, aes(x = due_date)) +
+    ggplot(InputData(), aes(x = due_date)) +
       geom_bar() + xlab("Date Order Due") + ylab("# of Orders Due")
   })
   
   output$next_orders <- DT::renderDataTable({
-    top5 <- order_data[order_data$client == input$client_select & order_data$order_status == "In Progress",]
+    top5 <- InputData()[InputData()$order_status == "In Progress",]
     top5 <- top5[order(top5$due_dat, decreasing = TRUE),][1:5,]
     DT::datatable(top5, options = list(paging = FALSE, searching = FALSE))
   })
@@ -53,4 +54,4 @@ server <- function(input, output) {
                                                         popup = ~client)
                                                               
   })
-}
+})
