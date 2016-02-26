@@ -12,6 +12,7 @@ shinyUI(dashboardPage(
       menuItem('Order List', tabName = 'order_list', icon = icon('th-list')),
       menuItem('Client Map', tabName = 'client_map', icon = icon('map')),
       menuItem('Financials', tabName = 'financials', icon = icon('money')),
+      menuItem('Add Order Form', tabName = 'order_form', icon = icon('file')),
       uiOutput('select_clients')
     )
   ),
@@ -19,7 +20,7 @@ shinyUI(dashboardPage(
     tabItems(
       tabItem(tabName = 'dashboard',
               fluidRow(
-                box(title = 'Order Status', status = 'danger', solidHeader = TRUE, width = 12, align = 'center',
+                box(title = 'Order Status', status = 'info', solidHeader = TRUE, width = 12, align = 'center',
                     h1(textOutput('order_status')))
               ),
               fluidRow(
@@ -48,9 +49,29 @@ shinyUI(dashboardPage(
       ),
       tabItem(tabName = 'financials',
               fluidRow(
-                box(title = 'Financials', status = 'info', solidHeader = TRUE, width = 12, align = 'center',
-                    tableOutput('financial_output'))
-              ))
-    )
-  )
-))
+                box(title = 'Overall YTD', status = 'info', solidHeader = TRUE, width = 6, align = 'center',
+                    tableOutput('financial_by_client'), tableOutput('financial_totals')),
+                box(title = '30-Day Summary', status = 'info', solidHeader = TRUE, width = 6, align = 'center',
+                    tableOutput('financial_by_client_30'), tableOutput('financial_totals_30'))
+              ),
+              fluidRow(
+                box(title = 'Order Trend', status = 'info', solidHeader = TRUE, width = 12,
+                    plotOutput('financials_plot', height = 400))
+              )
+      ),
+      tabItem(tabName = 'order_form',
+              fluidPage(
+                titlePanel('Create New Order'),
+                div(id = 'form', 
+                    textInput('order_num', 'Order Number', ''),
+                    textInput('client', 'Client'),
+                    dateInput('order_date', 'Order Date'),
+                    dateInput('due_date', 'Order Due Date'),
+                    textInput('order_price', 'Order Price'),
+                    textInput('order_amount', 'Order Quantity'),
+                    actionButton('submit', 'Submit', class = 'btn-primary')
+                )
+              )
+      )
+      )
+)))

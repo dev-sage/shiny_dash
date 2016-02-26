@@ -8,7 +8,9 @@ order_status <- ifelse(sample(c(0, 1), 500, replace = TRUE) == 1, "Completed", "
 order_date <- sample(seq(as.Date('2016-01-01'), as.Date('2016-01-20'), by = "day"), 500,
                      replace = TRUE)
 
-due_date <- sample(seq(as.Date('2016-02-01'), as.Date('2016-02-25'), by = "day"), 500,
+
+
+due_date <- rnorm(seq(as.Date('2016-02-01'), as.Date('2016-02-25'), by = "day"), 500,
                    replace = TRUE)
 
 client <- sample(clients, 500, replace = TRUE)
