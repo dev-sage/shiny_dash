@@ -9,7 +9,8 @@ library(leaflet)
 library(xtable)
 source("helpers.R")
 
-fieldsAll <- c('order_num', 'client', 'order_date', 'due_date', 'order_price', 'order_amount')
+order_fields <- c('order_num', 'client', 'order_date', 'due_date', 'order_price', 'order_amount')
+client_fields <- c('client_name', 'client_lng', 'client_lat')
 responseDir <- file.path("~/Desktop/shiny_save")
 
 order_data <- readRDS('./data/order_data.rds')
@@ -102,17 +103,30 @@ shinyServer(function(input, output) {
       guides(col = guide_legend(title = "Client"))
   })
   
- formData <- reactive({
-   data <- sapply(fieldsAll, function(x) input[[x]])
+ orderData <- reactive({
+   data <- sapply(order_fields, function(x) input[[x]])
    data <- t(data)
-   data
+   return(data)
  })
  
- observeEvent(input$submit, { saveData(formData()) } )
+ clientData <- reactive({
+   data <- sapply(client_fields, function(x) input[[x]])
+   data <- t(data)
+   return(data)
+ })
+ 
+ 
+ observeEvent(input$submit_order, { saveOrder(orderData()) } )
+ observeEvent(input$submit_client, { saveClient(clientData()) })
   
 })
 
 saveData <- function(data) {
   fileName <- "my_file.csv"
+  write.csv(x = data, file = file.path(responseDir, fileName), row.names = FALSE, quote = TRUE)
+}
+
+saveClient <- function(data) {
+  fileName <- "my_file2.csv"
   write.csv(x = data, file = file.path(responseDir, fileName), row.names = FALSE, quote = TRUE)
 }
