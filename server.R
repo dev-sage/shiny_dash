@@ -15,6 +15,8 @@ responseDir <- file.path("~/Desktop/shiny_save")
 order_data <- readRDS('./data/order_data.rds')
 client_list <- c('All', unique(order_data$client))
 
+str(order_data)
+
 shinyServer(function(input, output) {
   
   InputData <- reactive({

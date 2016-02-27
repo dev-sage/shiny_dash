@@ -62,7 +62,7 @@ shinyUI(dashboardPage(
       tabItem(tabName = 'order_form',
               fluidPage(
                 titlePanel('Create New Order'),
-                div(id = 'form', 
+                div(id = 'create_order', 
                     textInput('order_num', 'Order Number', ''),
                     textInput('client', 'Client'),
                     dateInput('order_date', 'Order Date'),
@@ -70,7 +70,8 @@ shinyUI(dashboardPage(
                     textInput('order_price', 'Order Price'),
                     textInput('order_amount', 'Order Quantity'),
                     actionButton('submit', 'Submit', class = 'btn-primary')
-                )
+                ),
+                div(id = 'create_')
               )
       )
       )
