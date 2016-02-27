@@ -9,14 +9,10 @@ library(leaflet)
 library(xtable)
 source("helpers.R")
 
-order_fields <- c('due_date', 'order_price', 'order_amount', 'order_note') # The dynamic fields are added below.
-client_fields <- c('client_name', 'client_lng', 'client_lat')
 responseDir <- file.path("~/Desktop/shiny_save")
 
 order_data <- readRDS('./data/order_data.rds')
 client_list <- c('All', unique(order_data$client))
-
-str(order_data)
 
 shinyServer(function(input, output) {
   
@@ -116,18 +112,21 @@ shinyServer(function(input, output) {
   })
   
  orderData <- reactive({
-   data <- sapply(order_fields, function(x) input[[x]])
-   data <- t(data)
-   data2 <- as.data.frame(order_num = nrow(InputData()) + 1, 
+   data <- data.frame(order_num = nrow(InputData()) + 1, 
                       client = input$client_select_form,
-                      order_placed_date = format(Sys.Date()), data)
-   print(head(data2))
-   return(data2)
+                      order_placed_date =  Sys.Date(),
+                      due_date = input$due_date,
+                      order_price = input$order_price,
+                      order_amount = input$order_amount,
+                      order_note = input$order_note)
+   print(data)
+   return(data)
  })
  
  clientData <- reactive({
-   data <- sapply(client_fields, function(x) input[[x]])
-   data <- t(data)
+   data <- data.frame(client_name = input$client_name, 
+                      client_lng = input$client_lng,
+                      client_lat = input$client_lat)
    return(data)
  })
  

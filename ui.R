@@ -67,7 +67,7 @@ shinyUI(dashboardPage(
                     verbatimTextOutput('order_placed_date'),
                     dateInput('due_date', 'Date to Deliver Order'),
                     numericInput('order_price', 'Order Price', value = 0, min = 0),
-                    numericInput('order_amount', 'Order Quantity', value = 0, min = 0),
+                    textInput('order_amount', 'Order Quantity'),
                     textInput('order_note', 'Order Note'),
                     actionButton('submit_order', 'Submit', class = 'btn-primary')
                 ),
