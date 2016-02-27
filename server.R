@@ -104,7 +104,7 @@ shinyServer(function(input, output) {
   })
   
   output$order_num <- renderText({
-    paste('Order Number:', nrow(InputData()) + 1)
+    paste('Order Number:', nrow(order_data) + 1)
   })
   
   output$order_placed_date <- renderText({
@@ -112,7 +112,7 @@ shinyServer(function(input, output) {
   })
   
  orderData <- reactive({
-   data <- data.frame(order_num = nrow(InputData()) + 1, 
+   data <- data.frame(order_num = nrow(order_data) + 1, 
                       client = input$client_select_form,
                       order_placed_date =  Sys.Date(),
                       due_date = input$due_date,
