@@ -9,7 +9,7 @@ library(leaflet)
 library(xtable)
 source("helpers.R")
 
-order_fields <- c('order_num', 'client', 'order_date', 'due_date', 'order_price', 'order_amount')
+order_fields <- c('due_date', 'order_price', 'order_amount', 'order_note') # The dynamic fields are added below.
 client_fields <- c('client_name', 'client_lng', 'client_lat')
 responseDir <- file.path("~/Desktop/shiny_save")
 
@@ -38,13 +38,17 @@ shinyServer(function(input, output) {
     selectInput('client_select', label = 'Select Client', choices = client_list)
   })
   
+  output$select_client_form <- renderUI({
+    selectInput('client_select_form', label = 'Select Client', choices = client_list)
+  })
+  
   output$orders_placed_date <- renderPlot({
     if(!is.null(InputData())) {
     ggplot(InputData(), aes(x = order_date)) +
       geom_bar() + xlab('Date Order Placed') + ylab('# of Orders Placed')
     }
   })
-  
+   
   output$orders_due_date <- renderPlot({
     if(!is.null(InputData())) {
     ggplot(InputData(), aes(x = due_date)) +
@@ -103,10 +107,22 @@ shinyServer(function(input, output) {
       guides(col = guide_legend(title = "Client"))
   })
   
+  output$order_num <- renderText({
+    paste('Order Number:', nrow(InputData()) + 1)
+  })
+  
+  output$order_placed_date <- renderText({
+    paste('Order Placed Date:', format(Sys.Date()))
+  })
+  
  orderData <- reactive({
    data <- sapply(order_fields, function(x) input[[x]])
    data <- t(data)
-   return(data)
+   data2 <- as.data.frame(order_num = nrow(InputData()) + 1, 
+                      client = input$client_select_form,
+                      order_placed_date = format(Sys.Date()), data)
+   print(head(data2))
+   return(data2)
  })
  
  clientData <- reactive({
@@ -115,13 +131,12 @@ shinyServer(function(input, output) {
    return(data)
  })
  
- 
  observeEvent(input$submit_order, { saveOrder(orderData()) } )
  observeEvent(input$submit_client, { saveClient(clientData()) })
   
 })
 
-saveData <- function(data) {
+saveOrder <- function(data) {
   fileName <- "my_file.csv"
   write.csv(x = data, file = file.path(responseDir, fileName), row.names = FALSE, quote = TRUE)
 }

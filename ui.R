@@ -61,19 +61,20 @@ shinyUI(dashboardPage(
       ),
       tabItem(tabName = 'order_form',
               fluidPage(
-                box(id = 'create_order', title = 'Create New Order',
-                    textInput('order_num', 'Order Number'),
-                    textInput('client', 'Client'),
-                    dateInput('order_date', 'Date Order Requested'),
+                box(id = 'create_order', title = 'Create New Order', width = 4,
+                    verbatimTextOutput('order_num'),
+                    uiOutput('select_client_form'),
+                    verbatimTextOutput('order_placed_date'),
                     dateInput('due_date', 'Date to Deliver Order'),
-                    textInput('order_price', 'Order Price'),
-                    textInput('order_amount', 'Order Quantity'),
+                    numericInput('order_price', 'Order Price', value = 0, min = 0),
+                    numericInput('order_amount', 'Order Quantity', value = 0, min = 0),
+                    textInput('order_note', 'Order Note'),
                     actionButton('submit_order', 'Submit', class = 'btn-primary')
                 ),
-                box(id = 'create_client', title = 'Create New Client',
+                box(id = 'create_client', title = 'Create New Client', width = 4,
                     textInput('client_name', 'Client Name'),
-                    textInput('client_lng', 'Client Longitude'),
-                    textInput('client_lat', 'Client Latitutde'),
+                    numericInput('client_lng', 'Client Longitude', value = NA),
+                    numericInput('client_lat', 'Client Latitutde', value = NA),
                     actionButton('submit_client', 'Submit', class = 'btn-primary'))
               )
       )
