@@ -1,4 +1,40 @@
-# Rewrite with closures.
+library(readr)
+
+read_orders <- function() {
+  orders <- read_csv("~/Dropbox/orders/orders.csv", 
+                     col_types = cols(order_num = col_integer(),
+                                      client = col_character(),
+                                      order_placed_date = col_date(format = "%Y-%m-%d"),
+                                      due_date = col_date(format = "%Y-%m-%d"), 
+                                      order_price = col_double(),
+                                      product = col_character(),
+                                      order_quantity = col_character(),
+                                      order_note = col_character(),
+                                      order_status = col_character()))
+  return(orders)
+}
+
+read_clients <- function() {
+  clients <- read_csv("~/Dropbox/clients/clients.csv",
+                      col_types = cols(client_name = col_character(),
+                                       client_note = col_character(),
+                                       client_lng = col_double(),
+                                       client_lat = col_double()))
+  return(clients)
+}
+
+read_products <- function() {
+  products <- read_csv("~/Dropbox/products/products.csv",
+                       col_types = cols(product_name = col_character(),
+                                        five_by_five_amt = col_character(),
+                                        half_tray_amt = col_character(),
+                                        full_tray_amt = col_character(),
+                                        days_to_grow = col_character(),
+                                        product_note = col_character()))
+  return(products)
+}
+
+
 financial_summ <- function(data) {
   total_orders <- length(data$order_num)
   total_payment <- format(round(sum(data$order_price), digits = 2), big.mark = ",", nsmall = 2)
