@@ -27,7 +27,9 @@ shinyServer(function(input, output) {
   reactive_vals$product_data <- product_data
   
   InputData <- reactive({
-    return(order_data)
+    if(is.null(input$select_client)) return()
+    else if(input$select_client == 'All') return(reactive_vals$order_data)
+    else return(reactive_vals$order_data[reactive_vals$order_data$client_name == input$select_clients, ])
   })
   
   output$order_status <- renderText({
@@ -38,12 +40,16 @@ shinyServer(function(input, output) {
     }
   })
   
-  output$select_clients <- renderUI({
-    selectInput('client_select', label = 'Select Client', choices = c('All', unique(client_data$client_name)))
+  output$select_client <- renderUI({
+    selectInput('select_client', label = 'Select Client', choices = c('All', unique(client_data$client_name)))
   })
   
   output$select_client_form <- renderUI({
-    selectInput('client_select_form', label = 'Select Client', choices = client_list)
+    selectInput('select_client_form', label = 'Select Client', choices = reactive_vals$client_data$client_name)
+  })
+  
+  output$select_product_form <- renderUI({
+    selectInput('select_product_form', label = 'Select Product', choices = reactive_vals$product_data$product_name)
   })
   
   output$orders_placed_date <- renderPlot({
@@ -125,11 +131,11 @@ shinyServer(function(input, output) {
     
  orderData <- reactive({
      data <- data.frame(order_num = nrow(reactive_vals$order_data) + 1, 
-                        client = input$client_select_form,
+                        client = input$select_client_form,
                         order_placed_date = Sys.Date(),
                         due_date = input$due_date,
                         order_price = input$order_price,
-                        product = input$order_product,
+                        product = input$select_product_form,
                         order_quantity = input$order_quantity,
                         order_note = input$order_note,
                         order_status = 'In Progress')
@@ -141,8 +147,6 @@ shinyServer(function(input, output) {
                       client_note = input$client_note,
                       client_lng = input$client_lng,
                       client_lat = input$client_lat)
-   client_data <<- rbind(client_data, data) 
-   update_data()
    return(data)
  })
  
@@ -161,11 +165,18 @@ shinyServer(function(input, output) {
      isolate(reactive_vals$order_data <- rbind(reactive_vals$order_data, orderData()))
      saveOrder(reactive_vals$order_data)
      print(reactive_vals$order_data)
+   } 
+   else if(input$submit_client) {
+     isolate(reactive_vals$client_data <- rbind(reactive_vals$client_data, clientData()))
+     saveClient(reactive_vals$client_data)
+     print(reactive_vals$client_data)
+   }
+   else if(input$submit_product) {
+     isolate(reactive_vals$product_data <- rbind(reactive_vals$product_data, productData()))
+     saveProduct(reactive_vals$product_data)
+     print(reactive_vals$product_data)
    }
  })
-
- observeEvent(input$submit_client, { saveClient(clientData()) })
- observeEvent(input$submit_product, { saveProduct(productData()) })
   
 })
 
@@ -182,7 +193,6 @@ saveClient <- function(client_data) {
 }
 
 saveProduct <- function(data) {
-  product_data <<- rbind(product_data, data)
   write.csv(x = product_data, file = '~/Dropbox/products/products.csv', row.names = FALSE)
 }
 

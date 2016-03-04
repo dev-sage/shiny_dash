@@ -13,7 +13,7 @@ shinyUI(dashboardPage(
       menuItem('Client Map', tabName = 'client_map', icon = icon('map')),
       menuItem('Financials', tabName = 'financials', icon = icon('money')),
       menuItem('Add Order Form', tabName = 'order_form', icon = icon('file')),
-      uiOutput('select_clients')
+      uiOutput('select_client')
     )
   ),
   dashboardBody(
@@ -67,7 +67,7 @@ shinyUI(dashboardPage(
                     verbatimTextOutput('order_placed_date'),
                     dateInput('due_date', 'Date to Deliver Order'),
                     numericInput('order_price', 'Order Price', value = 0, min = 0),
-                    textInput('order_product', 'Product'),
+                    uiOutput('select_product_form'),
                     textInput('order_quantity', 'Order Quantity'),
                     textInput('order_note', 'Order Note'),
                     actionButton('submit_order', 'Submit', class = 'btn-primary')
