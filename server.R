@@ -76,13 +76,19 @@ shinyServer(function(input, output) {
   })
   
   output$all_orders <- renderDataTable({
-    order_data
+    reactive_vals$order_data
   })
   
+  
+  ###############
+  # Map clients #
+  ###############
+  
   output$client_map <- renderLeaflet({
-    map_data <- data.frame('client' = unique(order_data$client), 
-                           'client_lat' = unique(order_data$client_lat),
-                           'client_lng' = unique(order_data$client_lng))
+    map_data <- data.frame('client' = unique(reactive_vals$client_data$client), 
+                           'client_lng' = unique(reactive_vals$client_data$client_lng),
+                           'client_lat' = unique(reactive_vals$client_data$client_lat))
+    
     leaflet(map_data) %>% 
       addProviderTiles('Stamen.Terrain') %>% addMarkers(lat = ~client_lat, 
                                                         lng = ~client_lng,
@@ -125,9 +131,9 @@ shinyServer(function(input, output) {
     paste('Order Placed Date:', format(Sys.Date()))
   })
   
-#####################################  
-# UPDATE ORDER/CLIENT/PRODUCT FORMS # 
-#####################################
+  #####################################  
+  # UPDATE ORDER/CLIENT/PRODUCT FORMS # 
+  #####################################
     
  orderData <- reactive({
      data <- data.frame(order_num = nrow(reactive_vals$order_data) + 1, 
@@ -159,6 +165,11 @@ shinyServer(function(input, output) {
                       product_note = input$product_note)
    return(data)
  })
+
+ 
+  ##############################################  
+  # Observe form input, and react accordingly. #
+  ##############################################
  
  observe({
    if(input$submit_order) {
