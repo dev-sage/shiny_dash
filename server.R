@@ -15,6 +15,12 @@ product_data <- read_products()
 
 client_list <- c('All', unique(order_data$client))
 
+# Defining Mandatory Fields for Forms
+mand_order_fields <- c('')
+mand_client_fields <- 
+mand_product_fields <- 
+
+
 shinyServer(function(input, output) {
   
 ######################################## 
@@ -44,11 +50,12 @@ shinyServer(function(input, output) {
   })
   
   output$select_client_form <- renderUI({
-    selectInput('select_client_form', label = 'Select Client', choices = reactive_vals$client_data$client_name)
+    selectInput('select_client_form', label = 'Select Client', selected = '',  choices = reactive_vals$client_data$client_name)
   })
   
+  # NOT SELECTING '', INSTEAD SELECTING 'SUGAR'
   output$select_product_form <- renderUI({
-    selectInput('select_product_form', label = 'Select Product', choices = reactive_vals$product_data$product_name)
+    selectInput('select_product_form', label = 'Select Product', selected = '', choices = reactive_vals$product_data$product_name)
   })
 
   output$order_quantity_class <- renderUI({
@@ -174,19 +181,19 @@ shinyServer(function(input, output) {
    if(input$submit_order) {
      isolate(reactive_vals$order_data <- rbind(reactive_vals$order_data, orderData()))
      saveOrder(reactive_vals$order_data)
-     shinyjs::reset('form_boxes')
-     shinyjs::hide('form_boxes')
-     shinyjs::show('submission_msg')
+     submission_complete()
      print(reactive_vals$order_data)
    } 
    else if(input$submit_client) {
      isolate(reactive_vals$client_data <- rbind(reactive_vals$client_data, clientData()))
      saveClient(reactive_vals$client_data)
+     submission_complete()
      print(reactive_vals$client_data)
    }
    else if(input$submit_product) {
      isolate(reactive_vals$product_data <- rbind(reactive_vals$product_data, productData()))
      saveProduct(reactive_vals$product_data)
+     submission_complete()
      print(reactive_vals$product_data)
    }
  })
@@ -212,6 +219,12 @@ saveClient <- function(client_data) {
 
 saveProduct <- function(data) {
   write.csv(x = product_data, file = '~/Dropbox/products/products.csv', row.names = FALSE)
+}
+
+submission_complete <- function() {
+  shinyjs::reset('form_boxes')
+  shinyjs::hide('form_boxes')
+  shinyjs::show('submission_msg')
 }
 
 

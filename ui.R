@@ -4,6 +4,8 @@ library(leaflet)
 library(DT)
 library(shinyjs)
 
+
+
 shinyUI(dashboardPage(
   skin = 'green', 
   dashboardHeader(title = "Buster's Business"),
@@ -71,7 +73,7 @@ shinyUI(dashboardPage(
                       dateInput('due_date', 'Date to Deliver Order'),
                       numericInput('order_price', 'Order Price', value = 0, min = 0),
                       uiOutput('select_product_form'),
-                      fluidRow(column(width = 6, numericInput('order_quantity', 'Order Quantity', value = 1, min = 1)),
+                      fluidRow(column(width = 6, numericInput('order_quantity', 'Order Quantity', value = 0, min = 1)),
                                column(width = 6, uiOutput('order_quantity_class'))),
                       textInput('order_note', 'Order Note'),
                       actionButton('submit_order', 'Submit', class = 'btn-primary')
@@ -90,7 +92,7 @@ shinyUI(dashboardPage(
                       textInput('full_tray_amt', 'Full Tray Amount'),
                       numericInput('days_to_grow', 'Days to Grow', value = NA),
                       textInput('product_note', 'Product Note'),
-                      actionButton('submit_product', 'Submit', class = 'btn-primary', color = 'green')
+                      actionButton('submit_product', 'Submit', class = 'btn-primary')
                   )
                 ),
                 shinyjs::hidden(
