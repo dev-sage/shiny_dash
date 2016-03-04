@@ -4,8 +4,6 @@ library(leaflet)
 library(DT)
 library(shinyjs)
 
-
-
 shinyUI(dashboardPage(
   skin = 'green', 
   dashboardHeader(title = "Buster's Business"),
@@ -81,8 +79,8 @@ shinyUI(dashboardPage(
                   box(id = 'create_client', title = 'Create New Client', width = 4, solidHeader = TRUE, status = 'warning',
                       textInput('client_name', 'Client Name'),
                       textInput('client_note', 'Note'),
-                      numericInput('client_lng', 'Client Longitude', value = NA),
-                      numericInput('client_lat', 'Client Latitutde', value = NA),
+                      numericInput('client_lng', 'Client Longitude', value = 0, min = -126 , max = -59),
+                      numericInput('client_lat', 'Client Latitutde', value = 0, min = 19, max = 51),
                       actionButton('submit_client', 'Submit', class = 'btn-primary')
                   ),
                   box(id = 'create_product', title = 'Create New Product', width = 4, solidHeader = TRUE, status = 'danger',
@@ -90,7 +88,7 @@ shinyUI(dashboardPage(
                       textInput('five_by_five_amt', '5x5 Seed Amount'),
                       textInput('half_tray_amt', 'Half Tray Seed Amount'), 
                       textInput('full_tray_amt', 'Full Tray Amount'),
-                      numericInput('days_to_grow', 'Days to Grow', value = NA),
+                      numericInput('days_to_grow', 'Days to Grow', value = 0),
                       textInput('product_note', 'Product Note'),
                       actionButton('submit_product', 'Submit', class = 'btn-primary')
                   )

@@ -18,8 +18,8 @@ client_list <- c('All', unique(order_data$client))
 # Defining Mandatory Fields for Forms
 mand_order_fields <- c('select_client_form',
                        'order_price', 'order_quantity', 'order_quantity_class')
-mand_client_fields <- c('client_name')
-mand_product_fields <- c('product_name', 'fivey_by_five_amt', 'half_tray_amt', 'full_tray_amt',
+mand_client_fields <- c('client_name', 'client_lng', 'client_lat')
+mand_product_fields <- c('product_name', 'five_by_five_amt', 'half_tray_amt', 'full_tray_amt',
                          'days_to_grow')
 
 
@@ -209,7 +209,15 @@ shinyServer(function(input, output) {
    order_filled <- vapply(mand_order_fields, function(x) { !is.null(input[[x]]) && input[[x]] != '' && input[[x]] != 0 }, logical(1))
    order_filled <- all(order_filled)
    
+   client_filled <- vapply(mand_client_fields, function(x) { !is.null(input[[x]]) && input[[x]] != '' && input[[x]] != 0 }, logical(1))
+   client_filled <- all(client_filled)
+   
+   product_filled <- vapply(mand_product_fields, function(x) { !is.null(input[[x]]) && input[[x]] != '' && input[[x]] != 0 }, logical(1))
+   product_filled <- all(product_filled)
+   
    shinyjs::toggleState(id = 'submit_order', condition = order_filled)
+   shinyjs::toggleState(id = 'submit_client', condition = client_filled)
+   shinyjs::toggleState(id = 'submit_product', condition = product_filled)
  })
   
 })
