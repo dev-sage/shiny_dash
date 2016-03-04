@@ -68,7 +68,7 @@ shinyUI(dashboardPage(
                     dateInput('due_date', 'Date to Deliver Order'),
                     numericInput('order_price', 'Order Price', value = 0, min = 0),
                     uiOutput('select_product_form'),
-                    fluidRow(column(width = 6, numericInput('order_quantity', 'Order Quantity', value = 0, min = 0)),
+                    fluidRow(column(width = 6, numericInput('order_quantity', 'Order Quantity', value = 1, min = 1)),
                              column(width = 6, uiOutput('order_quantity_class'))),
                     textInput('order_note', 'Order Note'),
                     actionButton('submit_order', 'Submit', class = 'btn-primary')

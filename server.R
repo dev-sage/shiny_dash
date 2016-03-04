@@ -141,7 +141,7 @@ shinyServer(function(input, output) {
                         due_date = input$due_date,
                         order_price = input$order_price,
                         product = input$select_product_form,
-                        order_quantity = input$order_quantity,
+                        order_quantity = paste(input$order_quantity, input$order_quantity_class, sep = ' '),
                         order_note = input$order_note,
                         order_status = 'In Progress')
    return(data)
