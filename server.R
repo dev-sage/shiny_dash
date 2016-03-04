@@ -174,6 +174,9 @@ shinyServer(function(input, output) {
    if(input$submit_order) {
      isolate(reactive_vals$order_data <- rbind(reactive_vals$order_data, orderData()))
      saveOrder(reactive_vals$order_data)
+     shinyjs::reset('form_boxes')
+     shinyjs::hide('form_boxes')
+     shinyjs::show('submission_msg')
      print(reactive_vals$order_data)
    } 
    else if(input$submit_client) {
@@ -186,6 +189,11 @@ shinyServer(function(input, output) {
      saveProduct(reactive_vals$product_data)
      print(reactive_vals$product_data)
    }
+ })
+ 
+ observeEvent(input$submit_again, {
+   shinyjs::show('form_boxes')
+   shinyjs::hide('submission_msg')
  })
   
 })
