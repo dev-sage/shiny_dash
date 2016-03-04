@@ -16,9 +16,11 @@ product_data <- read_products()
 client_list <- c('All', unique(order_data$client))
 
 # Defining Mandatory Fields for Forms
-mand_order_fields <- c('')
-mand_client_fields <- 
-mand_product_fields <- 
+mand_order_fields <- c('select_client_form',
+                       'order_price', 'order_quantity', 'order_quantity_class')
+mand_client_fields <- c('client_name')
+mand_product_fields <- c('product_name', 'fivey_by_five_amt', 'half_tray_amt', 'full_tray_amt',
+                         'days_to_grow')
 
 
 shinyServer(function(input, output) {
@@ -201,6 +203,13 @@ shinyServer(function(input, output) {
  observeEvent(input$submit_again, {
    shinyjs::show('form_boxes')
    shinyjs::hide('submission_msg')
+ })
+ 
+ observe({
+   order_filled <- vapply(mand_order_fields, function(x) { !is.null(input[[x]]) && input[[x]] != '' && input[[x]] != 0 }, logical(1))
+   order_filled <- all(order_filled)
+   
+   shinyjs::toggleState(id = 'submit_order', condition = order_filled)
  })
   
 })
