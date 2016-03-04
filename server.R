@@ -91,6 +91,14 @@ shinyServer(function(input, output) {
     reactive_vals$order_data
   })
   
+  output$all_clients <- renderDataTable({
+    reactive_vals$client_data
+  })
+  
+  output$all_products <- renderDataTable({
+    reactive_vals$product_data
+  })
+  
   
   ###############
   # Map clients #

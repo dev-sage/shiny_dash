@@ -12,6 +12,8 @@ shinyUI(dashboardPage(
     sidebarMenu(
       menuItem('Dashboard', tabName = 'dashboard', icon = icon('dashboard')),
       menuItem('Order List', tabName = 'order_list', icon = icon('th-list')),
+      menuItem('Client List', tabName = 'client_list', icon = icon('group')),
+      menuItem('Product List', tabName = 'product_list', icon = icon('shopping-basket')),
       menuItem('Client Map', tabName = 'client_map', icon = icon('map')),
       menuItem('Financials', tabName = 'financials', icon = icon('money')),
       menuItem('Add Order Form', tabName = 'order_form', icon = icon('file')),
@@ -41,6 +43,18 @@ shinyUI(dashboardPage(
               fluidRow(
                 box(title = 'All Orders', status = 'danger', solidHeader = TRUE, width = 12,
                     dataTableOutput('all_orders'))
+              )
+      ),
+      tabItem(tabName = 'client_list',
+              fluidRow(
+                box(title = 'All Clients', status = 'danger', solidHeader = TRUE, width = 12,
+                    dataTableOutput('all_clients'))
+              )
+      ),
+      tabItem(tabName = 'product_list',
+              fluidRow(
+                box(title = 'All Products', status = 'danger', solidHeader = TRUE, width = 12,
+                    dataTableOutput('all_products'))
               )
       ),
       tabItem(tabName = 'client_map',
