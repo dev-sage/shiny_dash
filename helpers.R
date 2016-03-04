@@ -1,5 +1,14 @@
 library(readr)
 
+form_css <- '.mand_red { color: red; }'
+
+apply_css <- function(label) {
+  tagList(label, span('*', class = 'mand_red'))
+}
+
+###################
+# Reading in Data # 
+###################
 read_orders <- function() {
   orders <- read_csv("~/Dropbox/orders/orders.csv", 
                      col_types = cols(order_num = col_integer(),
@@ -35,6 +44,9 @@ read_products <- function() {
 }
 
 
+##########################
+# Financial Summary Tabs # 
+##########################
 financial_summ <- function(data) {
   total_orders <- length(data$order_num)
   total_payment <- format(round(sum(data$order_price), digits = 2), big.mark = ",", nsmall = 2)
@@ -72,3 +84,15 @@ client_agg_30 <- function(data) {
   sub_data <- arrange(sub_data, desc(`Est. Yearly Total`))
   return(sub_data)
 }
+
+#################
+# Grow Schedule # 
+#################
+
+
+
+
+
+
+
+

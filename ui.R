@@ -3,6 +3,7 @@ library(shinydashboard)
 library(leaflet)
 library(DT)
 library(shinyjs)
+source('helpers.R')
 
 shinyUI(dashboardPage(
   skin = 'green', 
@@ -63,12 +64,13 @@ shinyUI(dashboardPage(
       tabItem(tabName = 'order_form',
               fluidPage(
                 shinyjs::useShinyjs(),
+                shinyjs::inlineCSS(form_css),
                 div(id = 'form_boxes',
                   box(id = 'create_order', title = 'Create New Order', width = 4, solidHeader = TRUE, status = 'info',
                       verbatimTextOutput('order_num'),
                       uiOutput('select_client_form'),
                       verbatimTextOutput('order_placed_date'),
-                      dateInput('due_date', 'Date to Deliver Order'),
+                      dateInput('due_date', 'Date to Deliver Order', value = ''),
                       numericInput('order_price', 'Order Price', value = 0, min = 0),
                       uiOutput('select_product_form'),
                       fluidRow(column(width = 6, numericInput('order_quantity', 'Order Quantity', value = 0, min = 1)),
