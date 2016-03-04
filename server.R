@@ -18,10 +18,16 @@ client_list <- c('All', unique(order_data$client))
 
 shinyServer(function(input, output) {
   
+######################################## 
+# Reactive Values and Update Functions # 
+########################################  
+  reactive_vals <- reactiveValues()
+  reactive_vals$order_data <- order_data
+  reactive_vals$client_data <- client_data
+  reactive_vals$product_data <- product_data
+  
   InputData <- reactive({
-    if(is.null(input$client_select)) return(NULL)
-    if(tolower(input$client_select) == 'all') return(order_data)
-    order_data[order_data$client == input$client_select,]
+    return(order_data)
   })
   
   output$order_status <- renderText({
@@ -33,7 +39,7 @@ shinyServer(function(input, output) {
   })
   
   output$select_clients <- renderUI({
-    selectInput('client_select', label = 'Select Client', choices = client_list)
+    selectInput('client_select', label = 'Select Client', choices = c('All', unique(client_data$client_name)))
   })
   
   output$select_client_form <- renderUI({
@@ -64,7 +70,7 @@ shinyServer(function(input, output) {
   })
   
   output$all_orders <- renderDataTable({
-    order_data[order(order_data$due_date, decreasing = TRUE), ]
+    order_data
   })
   
   output$client_map <- renderLeaflet({
@@ -106,23 +112,27 @@ shinyServer(function(input, output) {
   })
   
   output$order_num <- renderText({
-    paste('Order Number:', nrow(order_data) + 1)
+    paste('Order Number:', nrow(reactive_vals$order_data) + 1)
   })
   
   output$order_placed_date <- renderText({
     paste('Order Placed Date:', format(Sys.Date()))
   })
   
+#####################################  
+# UPDATE ORDER/CLIENT/PRODUCT FORMS # 
+#####################################
+    
  orderData <- reactive({
-   data <- data.frame(order_num = nrow(order_data) + 1, 
-                      client = input$client_select_form,
-                      order_placed_date = Sys.Date(),
-                      due_date = input$due_date,
-                      order_price = input$order_price,
-                      product = input$order_product,
-                      order_quantity = input$order_quantity,
-                      order_note = input$order_note,
-                      order_status = 'In Progress')
+     data <- data.frame(order_num = nrow(reactive_vals$order_data) + 1, 
+                        client = input$client_select_form,
+                        order_placed_date = Sys.Date(),
+                        due_date = input$due_date,
+                        order_price = input$order_price,
+                        product = input$order_product,
+                        order_quantity = input$order_quantity,
+                        order_note = input$order_note,
+                        order_status = 'In Progress')
    return(data)
  })
  
@@ -131,6 +141,8 @@ shinyServer(function(input, output) {
                       client_note = input$client_note,
                       client_lng = input$client_lng,
                       client_lat = input$client_lat)
+   client_data <<- rbind(client_data, data) 
+   update_data()
    return(data)
  })
  
@@ -144,26 +156,34 @@ shinyServer(function(input, output) {
    return(data)
  })
  
- observeEvent(input$submit_order, { saveOrder(orderData()) } )
+ observe({
+   if(input$submit_order) {
+     isolate(reactive_vals$order_data <- rbind(reactive_vals$order_data, orderData()))
+     saveOrder(reactive_vals$order_data)
+     print(reactive_vals$order_data)
+   }
+ })
+
  observeEvent(input$submit_client, { saveClient(clientData()) })
  observeEvent(input$submit_product, { saveProduct(productData()) })
   
 })
 
-saveOrder <- function(data) {
-  order_data <<- rbind(order_data, data)
-  write.csv(x = order_data, file = '~/Dropbox/orders/orders.csv', row.names = FALSE, col.names = FALSE, append = FALSE)
-  print(order_data)
+############################################### 
+# SAVING DATA FROM ORDER/CLIENT/PRODUCT FORMS # 
+###############################################
+
+saveOrder <- function(order_data) {
+  write.csv(x = order_data, file = '~/Dropbox/orders/orders.csv', row.names = FALSE)
 }
 
-saveClient <- function(data) {
-  client_data <- rbind(client_data, data) 
-  write.csv(x = client_data, file = '~/Dropbox/clients/clients.csv', row.names = FALSE, col.names = FALSE, append = FALSE)
+saveClient <- function(client_data) {
+  write.csv(x = client_data, file = '~/Dropbox/clients/clients.csv', row.names = FALSE)
 }
 
 saveProduct <- function(data) {
   product_data <<- rbind(product_data, data)
-  write.csv(x = product_data, file = '~/Dropbox/products/products.csv', row.names = FALSE, col.names = FALSE, append = FALSE)
+  write.csv(x = product_data, file = '~/Dropbox/products/products.csv', row.names = FALSE)
 }
 
 
