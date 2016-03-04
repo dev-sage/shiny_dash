@@ -8,7 +8,7 @@ read_orders <- function() {
                                       due_date = col_date(format = "%Y-%m-%d"), 
                                       order_price = col_double(),
                                       product = col_character(),
-                                      order_quantity = col_character(),
+                                      order_quantity = col_integer(),
                                       order_note = col_character(),
                                       order_status = col_character()))
   return(orders)

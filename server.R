@@ -28,7 +28,7 @@ shinyServer(function(input, output) {
   InputData <- reactive({
     if(is.null(input$select_client)) return()
     else if(input$select_client == 'All') return(reactive_vals$order_data)
-    else return(reactive_vals$order_data[reactive_vals$order_data$client_name == input$select_clients, ])
+    else return(reactive_vals$order_data[reactive_vals$order_data$client_name == input$select_client, ])
   })
   
   output$order_status <- renderText({
@@ -50,7 +50,11 @@ shinyServer(function(input, output) {
   output$select_product_form <- renderUI({
     selectInput('select_product_form', label = 'Select Product', choices = reactive_vals$product_data$product_name)
   })
-  
+
+  output$order_quantity_class <- renderUI({
+    selectInput('order_quantity_class', label = 'Order Class', choices = c('5x5', 'Half Tray', 'Full Tray'))
+  })
+
   output$orders_placed_date <- renderPlot({
     if(!is.null(InputData())) {
     ggplot(InputData(), aes(x = order_placed_date)) +
