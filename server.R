@@ -9,7 +9,6 @@ library(leaflet)
 library(xtable)
 source("helpers.R")
 
-
 order_data <- read_orders()
 client_data <- read_clients()
 product_data <- read_products()
@@ -85,14 +84,10 @@ shinyServer(function(input, output) {
   ###############
   
   output$client_map <- renderLeaflet({
-    map_data <- data.frame('client' = unique(reactive_vals$client_data$client), 
-                           'client_lng' = unique(reactive_vals$client_data$client_lng),
-                           'client_lat' = unique(reactive_vals$client_data$client_lat))
-    
-    leaflet(map_data) %>% 
+    leaflet(reactive_vals$client_data) %>% 
       addProviderTiles('Stamen.Terrain') %>% addMarkers(lat = ~client_lat, 
                                                         lng = ~client_lng,
-                                                        popup = ~client)
+                                                        popup = ~client_name)
   })
   
   output$financial_totals <- renderTable({
@@ -160,7 +155,7 @@ shinyServer(function(input, output) {
    data <- data.frame(product_name = input$product_name,
                       five_by_five_amt = input$five_by_five_amt,
                       half_tray_amt = input$half_tray_amt,
-                      full_try_amt = input$full_tray_amt,
+                      full_tray_amt = input$full_tray_amt,
                       days_to_grow = input$days_to_grow,
                       product_note = input$product_note)
    return(data)
