@@ -1,9 +1,14 @@
 library(readr)
+library(lubridate)
 
+##############
+# Custom CSS # 
+##############
 form_css <- '.mand_red { color: red; }'
 
 apply_css <- function(label) {
   tagList(label, span('*', class = 'mand_red'))
+  
 }
 
 ###################
@@ -19,6 +24,7 @@ read_orders <- function() {
                                       product = col_character(),
                                       order_quantity = col_character(),
                                       order_note = col_character(),
+                                      order_interval = col_character(),
                                       order_status = col_character()))
   return(orders)
 }
@@ -43,6 +49,27 @@ read_products <- function() {
   return(products)
 }
 
+read_grow <- function() {
+  grow <- read_csv("~/Dropbox/grow/grow.csv",
+                       col_types = cols(order_num = col_character(),
+                                        client = col_character(),
+                                        delivery_date = col_date(format = "%Y-%m-%d"),
+                                        product = col_character(),
+                                        order_interval = col_character(),
+                                        quantity = col_character(),
+                                        note = col_character(),
+                                        start_date = col_date(format = "%Y-%m-%d")))
+  return(grow)
+}
+
+grow_data <- data.frame(order_num = "00000101100211",
+                        client = "Gobbles",
+                        delivery_date = '2015-03-02',
+                        product = 'Sugar',
+                        order_interval = 'Once',
+                        quantity = '1 5x5',
+                        note = 'cool_stuff',
+                        start_date = '2015-02-02')
 
 ##########################
 # Financial Summary Tabs # 
@@ -89,7 +116,39 @@ client_agg_30 <- function(data) {
 # Grow Schedule # 
 #################
 
+# Generate grow dataset
+add_to_grow <- function(order, products) {
+  order_data <- data.frame(order_num = order$order_num,
+                           client = order$client,
+                           delivery_date = due_date,
+                           product = product,
+                           order_interval = order_interval,
+                           quantity = order_quantity,
+                           note = order_note)
 
+  order_data$start_date <- order_data$delivery_date - products$days_to_grow[products$product_name == order_data$product]
+  
+  if(order_data$order_interval == '1 Week') { orders_for_year <- det_yearly_orders(order_data, 7) }
+  else if(order_data$order_interval == '2 Weeks') { orders_for_year <- det_yearly_orders(order_data, 14) }
+  else if(order_data$order_interval == '3 Weeks') { orders_for_year <- det_yearly_orders(order_data, 21) }
+  else if(order_data$order_interval == 'Once Only') { orders_for_year <- order_data }
+  
+  print(orders_for_year)
+  # return(orders_for_year)
+}
+
+det_yearly_orders <- function(order_data, interval) {
+  year_of_orders <- order_data
+  for(i in 2:(round(365/interval))) {
+    next_order <- order_data
+    next_order$delivery_data <- order_data$delivery_date + interval
+    next_order$start_date <- order_data$start_date + interval
+    year_of_orders <- rbind(year_of_orders, order_data)
+    order_data <- next_order
+    next_order <- NULL
+  }
+  return(year_of_orders)
+}
 
 
 

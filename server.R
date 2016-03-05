@@ -12,12 +12,13 @@ source("helpers.R")
 order_data <- read_orders()
 client_data <- read_clients()
 product_data <- read_products()
+grow_data <- read_grow()
 
 client_list <- c('All', unique(order_data$client))
 
 # Defining Mandatory Fields for Forms
-mand_order_fields <- c('select_client_form',
-                       'order_price', 'order_quantity', 'order_quantity_class')
+mand_order_fields <- c('select_client_form', 'order_price', 'order_quantity', 'order_quantity_class',
+                       'order_interval')
 mand_client_fields <- c('client_name', 'client_lng', 'client_lat')
 mand_product_fields <- c('product_name', 'five_by_five_amt', 'half_tray_amt', 'full_tray_amt',
                          'days_to_grow')
@@ -32,6 +33,7 @@ shinyServer(function(input, output) {
   reactive_vals$order_data <- order_data
   reactive_vals$client_data <- client_data
   reactive_vals$product_data <- product_data
+  reactive_vals$grow_data <- grow_data
   
   InputData <- reactive({
     if(is.null(input$select_client)) return()
@@ -165,7 +167,9 @@ shinyServer(function(input, output) {
                         product = input$select_product_form,
                         order_quantity = paste(input$order_quantity, input$order_quantity_class, sep = ' '),
                         order_note = input$order_note,
+                        order_interval = input$order_interval,
                         order_status = 'In Progress')
+   
    return(data)
  })
  
@@ -194,6 +198,8 @@ shinyServer(function(input, output) {
  
  observe({
    if(input$submit_order) {
+     isolate(reactive_vals$grow_data <- add_to_grow(orderData(), reactive_vals$product_data))
+     # saveGrow(grow_data)
      isolate(reactive_vals$order_data <- rbind(reactive_vals$order_data, orderData()))
      saveOrder(reactive_vals$order_data)
      submission_complete()
@@ -247,8 +253,12 @@ saveClient <- function(client_data) {
   write.csv(x = client_data, file = '~/Dropbox/clients/clients.csv', row.names = FALSE)
 }
 
-saveProduct <- function(data) {
+saveProduct <- function(product_data) {
   write.csv(x = product_data, file = '~/Dropbox/products/products.csv', row.names = FALSE)
+}
+
+saveGrow <- function(grow_data) {
+  write.csv(x = grow_data, file = '~/Dropbox/grow/grow.csv', row.names = FALSE)
 }
 
 submission_complete <- function() {

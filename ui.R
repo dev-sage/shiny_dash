@@ -5,6 +5,8 @@ library(DT)
 library(shinyjs)
 source('helpers.R')
 
+select_interval_choices <- c('', 'Once Only', '1 Week', '2 Weeks', '3 Weeks')
+
 shinyUI(dashboardPage(
   skin = 'green', 
   dashboardHeader(title = "Buster's Business"),
@@ -99,6 +101,7 @@ shinyUI(dashboardPage(
                       fluidRow(column(width = 6, numericInput('order_quantity', 'Order Quantity', value = 0, min = 1)),
                                column(width = 6, uiOutput('order_quantity_class'))),
                       textInput('order_note', 'Order Note'),
+                      selectInput('order_interval', 'Order Interval', choices = select_interval_choices),
                       actionButton('submit_order', 'Submit', class = 'btn-primary')
                   ),
                   box(id = 'create_client', title = 'Create New Client', width = 4, solidHeader = TRUE, status = 'warning',
