@@ -39,10 +39,16 @@ shinyServer(function(input, output) {
     else return(reactive_vals$order_data[reactive_vals$order_data$client_name == input$select_client, ])
   })
   
-  output$order_status <- renderText({
+  output$order_status_completed <- renderText({
     if(!is.null(InputData())) {
       paste('COMPLETED: ', as.character(nrow(InputData()[InputData()$order_status == 'Completed',])),
-            'OUTSTANDING: ', as.character(nrow(InputData()[InputData()$order_status == 'In Progress',])),
+            sep = ' ')
+    }
+  })
+
+  output$order_status_in_progress <- renderText({
+    if(!is.null(InputData())) {
+      paste('OUTSTANDING: ', as.character(nrow(InputData()[InputData()$order_status == 'In Progress',])),
             sep = ' ')
     }
   })
@@ -52,12 +58,11 @@ shinyServer(function(input, output) {
   })
   
   output$select_client_form <- renderUI({
-    selectInput('select_client_form', label = 'Select Client', selected = '',  choices = reactive_vals$client_data$client_name)
+    selectInput('select_client_form', label = 'Select Client', selected = '',  choices = c('', reactive_vals$client_data$client_name))
   })
   
-  # NOT SELECTING '', INSTEAD SELECTING 'SUGAR'
   output$select_product_form <- renderUI({
-    selectInput('select_product_form', label = 'Select Product', selected = '', choices = reactive_vals$product_data$product_name)
+    selectInput('select_product_form', label = 'Select Product', selected = '', choices = c('', reactive_vals$product_data$product_name))
   })
 
   output$order_quantity_class <- renderUI({

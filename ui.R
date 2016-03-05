@@ -24,9 +24,18 @@ shinyUI(dashboardPage(
     tabItems(
       tabItem(tabName = 'dashboard',
               fluidRow(
-                box(title = 'Order Status', status = 'info', solidHeader = TRUE, width = 12, align = 'center',
-                    h1(textOutput('order_status')))
-              ),
+                column(width = 6, offset = 0,
+                       valueBox(value = textOutput('order_status_completed'), 
+                                subtitle = 'Orders', 
+                                width = 12,
+                                color = 'olive',
+                                icon = icon('smile-o'))),
+                column(width = 6, offset = 0,
+                       valueBox(value = textOutput('order_status_in_progress'), 
+                                subtitle = 'Orders', 
+                                width = 12,
+                                color = 'orange',
+                                icon = icon('hourglass-2')))),
               fluidRow(
                 box(title = 'Orders Placed', status = 'primary', solidHeader = TRUE,
                     plotOutput('orders_placed_date', height = 250)),
